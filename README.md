@@ -3,6 +3,8 @@
 ## Table of Contents
 
 - [Introduction](#introduction)
+- [Contribution](#contribution)
+- [Feedback](#feedback)
 - [Creating a new Drupal project with Composer](#creating-a-new-drupal-project-with-composer)
 - [Using the Symfony web server for local development](#using-the-symfony-web-server-for-local-development)
 - [The different types of available tests](#the-different-types-of-available-tests)
