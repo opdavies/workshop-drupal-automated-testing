@@ -47,11 +47,16 @@
 
 ## Contribution
 
-Please feel free to create issue and/or submit pull requests to this repository whilst working through these instructions. Any contributions would be greatly appreciated!
+Please feel free to create issue and/or submit pull requests to this repository
+whilst working through these instructions. Any contributions would be greatly
+appreciated!
 
 ## Feedback
 
-Feedback would also be appreciated! You can contact me via <oliver+drupalcamp.training@oliverdavies.uk>, [@opdavies on Twitter](https://twitter.com/opdavies) or `opdavies` on Drupal Slack.
+Feedback would also be appreciated! You can contact me via
+<oliver+drupalcamp.training@oliverdavies.uk>,
+[@opdavies on Twitter](https://twitter.com/opdavies) or `opdavies` on Drupal
+Slack.
 
 ## Introduction
 
