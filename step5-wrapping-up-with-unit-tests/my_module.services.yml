@@ -1,0 +1,6 @@
+services:
+  Drupal\my_module\Controller\BlogPageController:
+    autowire: true
+
+  Drupal\my_module\Repository\ArticleRepository:
+    autowire: true
