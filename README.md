@@ -718,6 +718,8 @@ injecting the `EntityTypeManager` and using it to return nodes from the
 `getAll()` method rather than the empty array.
 
 ```diff
++ use Drupal\Core\Entity\EntityTypeManagerInterface;
++
 + /**
 +  * @var \Drupal\Core\Entity\EntityStorageInterface
 +  */
