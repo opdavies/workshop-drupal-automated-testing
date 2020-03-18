@@ -49,27 +49,19 @@
 
 ## Contribution
 
-Please feel free to create issue and/or submit pull requests to this repository
-whilst working through these instructions. Any contributions would be greatly
-appreciated!
+Please feel free to create issue and/or submit pull requests to this repository whilst working through these instructions. Any contributions would be greatly appreciated!
 
 ## Feedback
 
-Feedback would also be appreciated! You can contact me via
-<oliver+drupalcamp.training@oliverdavies.uk>,
-[@opdavies on Twitter](https://twitter.com/opdavies) or `opdavies` on Drupal
-Slack.
+Feedback would also be appreciated! You can contact me via <oliver+drupalcamp.training@oliverdavies.uk>, [@opdavies on Twitter](https://twitter.com/opdavies) or `opdavies` on Drupal Slack.
 
 ## Introduction
 
 ## Creating a new Drupal project with Composer
 
-If don’t have Composer, visit <https://getcomposer.org/download> for
-instructions on how to install it on your computer.
+If don’t have Composer, visit <https://getcomposer.org/download> for instructions on how to install it on your computer.
 
-This assumes that Composer is installed globally and is available by running the
-`composer` command. Alternatively, you can download the phar file and run
-`php composer.phar` instead.
+This assumes that Composer is installed globally and is available by running the `composer` command. Alternatively, you can download the phar file and run `php composer.phar` instead.
 
 ```bash
 # Create a new Drupal project
@@ -81,12 +73,9 @@ cd my-project
 composer require --dev drupal/core-dev
 ```
 
-You should now have files present including `web/index.php` and
-`vendor/bin/phpunit`. Now you can start serving this site locally.
+You should now have files present including `web/index.php` and `vendor/bin/phpunit`. Now you can start serving this site locally.
 
-**Note:** Development dependencies, including PHPUnit, should only be installed
-locally and should not be present on public servers. Doing so would present a
-security risk to your application.
+**Note:** Development dependencies, including PHPUnit, should only be installed locally and should not be present on public servers. Doing so would present a security risk to your application.
 
 ## Using the Symfony web server for local development
 
@@ -96,28 +85,21 @@ https://symfony.com/doc/current/setup/symfony_server.html
 - Download from <https://symfony.com/download>.
 - Docker provides the integration with MySQL.
 - Faster performance compared to mounting files within Docker volumes.
-- Need `docker-compose.yml` to provide the database service, `.php-version` to
-  set the version of PHP
+- Need `docker-compose.yml` to provide the database service, `.php-version` to set the version of PHP
 - <https://github.com/opdavies/symfony-server-drupal-example>
 - <https://opdavi.es/symfony-server> - blog post
 
 ## The different types of available tests
 
-- **Functional** (web, feature) - tests behaviour and functionality, makes HTTP
-  requests to the webserver and has access to the database and other services
-  via the service container. Slower to run.
+- **Functional** (web, feature) - tests behaviour and functionality, makes HTTP requests to the webserver and has access to the database and other services via the service container. Slower to run.
 - **FunctionalJavascript** - functional tests, but access to JavaScript.
-- **Kernel** (integration) - no browser capabilities, has access to the database
-  and other services but requires more configuration.
-- **Unit** - no access to the database or service container, all dependencies
-  need to be mocked. Fast to run.
+- **Kernel** (integration) - no browser capabilities, has access to the database and other services but requires more configuration.
+- **Unit** - no access to the database or service container, all dependencies need to be mocked. Fast to run.
 
 ## Different approaches to testing
 
-- Inside-out (testing pyramid) - mostly unit tests, some integration tests, few
-  functional tests.
-- Outside-in (testing trophy) - mostly functional tests, some integration tests,
-  few unit tests. More flexible, easier to refactor.
+- Inside-out (testing pyramid) - mostly unit tests, some integration tests, few functional tests.
+- Outside-in (testing trophy) - mostly functional tests, some integration tests, few unit tests. More flexible, easier to refactor.
 
 ## Structure of a test
 
@@ -140,8 +122,7 @@ https://symfony.com/doc/current/setup/symfony_server.html
 
 ## Acceptance criteria
 
-This module will be used to demonstrate how to take a test-driven approach to
-develop a module to the following acceptance criteria:
+This module will be used to demonstrate how to take a test-driven approach to develop a module to the following acceptance criteria:
 
 - As a site visitor
 - I want to see a list of all published articles at `/blog`
@@ -149,8 +130,7 @@ develop a module to the following acceptance criteria:
 
 ## Step 0: Preparation
 
-To begin with, we need the site to be running. If using the Symfony server, run
-these commands:
+To begin with, we need the site to be running. If using the Symfony server, run these commands:
 
 ```bash
 # Start the service containers
@@ -160,8 +140,7 @@ docker-compose up -d
 symfony serve -d
 ```
 
-You don’t need to install Drupal, it just needs to be able to connect to the
-database.
+You don’t need to install Drupal, it just needs to be able to connect to the database.
 
 ## Step 1: Writing your first test
 
@@ -175,11 +154,9 @@ mkdir -p web/modules/my_module
 
 ### 1b. Create an `.info.yml` file for the module
 
-In order to install the module, it needs an info.yml file that matches the name
-of the module (e.g. `my_module.info.yml`).
+In order to install the module, it needs an info.yml file that matches the name of the module (e.g. `my_module.info.yml`).
 
-Within the `my_module` directory, create the file and paste in the following
-content:
+Within the `my_module` directory, create the file and paste in the following content:
 
 ```yaml
 name: My Module
@@ -225,28 +202,20 @@ Some things to note:
 
 - The name of the class must match the filename.
 - The filename must end with `Test.php`.
-- The namespace is `Drupal\Tests\{module_name}`, followed by any additional
-  directories (e.g. `Functional`).
+- The namespace is `Drupal\Tests\{module_name}`, followed by any additional directories (e.g. `Functional`).
 - Test methods must start with `test`, or use the `@test` annotation.
 
 ### 1e. Preparing PHPUnit
 
-Firstly, we need to create a `phpunit.xml` file to configure PHPUnit. Core has a
-`phpunit.xml.dist` file that we can duplicate and edit.
+Firstly, we need to create a `phpunit.xml` file to configure PHPUnit. Core has a `phpunit.xml.dist` file that we can duplicate and edit.
 
 ```bash
 cp web/core/phpunit.xml.dist web/core/phpunit.xml
 ```
 
-Update the `SIMPLETEST_BASE_URL` value to be the address that the website is
-currently running on. This needs to be correct so that functional tests return
-the correct response codes, so ensure that any port numbers are correct and also
-that the site is correctly marked as HTTP or HTTPS.
+Update the `SIMPLETEST_BASE_URL` value to be the address that the website is currently running on. This needs to be correct so that functional tests return the correct response codes, so ensure that any port numbers are correct and also that the site is correctly marked as HTTP or HTTPS.
 
-We also need to configure the database for Drupal to connect to and use when
-running functional and kernel tests. This could be your project’s MySQL or
-PostgreSQL database with a table prefix, but in this case, we’ll use a separate
-SQLite database.
+We also need to configure the database for Drupal to connect to and use when running functional and kernel tests. This could be your project’s MySQL or PostgreSQL database with a table prefix, but in this case, we’ll use a separate SQLite database.
 
 ```diff
 - <env name="SIMPLETEST_BASE_URL" value=""/>
@@ -266,24 +235,20 @@ cd web
 ../vendor/bin/phpunit -c core modules/my_module
 ```
 
-You should see a summary of the number of tests and assertions that were run.
-This is the expected output if all of the tests pass:
+You should see a summary of the number of tests and assertions that were run. This is the expected output if all of the tests pass:
 
 > OK (1 test, 2 assertions)
 
-If a test failed, the output would show the class and method name for the
-failing test, and give a summary of the failure.
+If a test failed, the output would show the class and method name for the failing test, and give a summary of the failure.
 
 > Drupal\Tests\my_module\Functional\MyModuleTest::testThatTheFrontPageLoads
-> Behat\Mink\Exception\ExpectationException: Current response status code is
-> 404, but 200 expected.
+> Behat\Mink\Exception\ExpectationException: Current response status code is 404, but 200 expected.
 
 Other useful options include `--stop-on-failure`, `--filter` and `--testdox`.
 
 ### 1g. (Optional) Running tests via a Composer script
 
-To simplify running tests, the command could be simplified by [adding a
-script][composer scripts] to `composer.json`:
+To simplify running tests, the command could be simplified by [adding a script][composer scripts] to `composer.json`:
 
 ```json
 "scripts": {
@@ -294,16 +259,11 @@ script][composer scripts] to `composer.json`:
 }
 ```
 
-This means that you can run just `symfony composer test:phpunit` or
-`symfony composer test` and it will automatically move into the right directory
-and execute the test command.
+This means that you can run just `symfony composer test:phpunit` or `symfony composer test` and it will automatically move into the right directory and execute the test command.
 
-This approach can be useful if you want to run other commands in addition to
-PHPUnit such as PHPStan, PHP Code Sniffer or Drupal Check. Each command can be
-added to the script and they will each be executed.
+This approach can be useful if you want to run other commands in addition to PHPUnit such as PHPStan, PHP Code Sniffer or Drupal Check. Each command can be added to the script and they will each be executed.
 
-If needed, you can still pass additional arguments and options to the command by
-appending `--` followed by the arguments.
+If needed, you can still pass additional arguments and options to the command by appending `--` followed by the arguments.
 
 ```bash
 symfony composer test:phpunit -- modules/my_module \
@@ -311,23 +271,17 @@ symfony composer test:phpunit -- modules/my_module \
   --filter=the_front_page_loads_for_anonymous_users
 ```
 
-Locally, make sure that the command is prefixed with `symfony` if you are using
-the Symfony web server to ensure that the correct PHP version etc is used.
+Locally, make sure that the command is prefixed with `symfony` if you are using the Symfony web server to ensure that the correct PHP version etc is used.
 
-[composer scripts]:
-  https://getcomposer.org/doc/articles/scripts.md#writing-custom-commands
+[composer scripts]: https://getcomposer.org/doc/articles/scripts.md#writing-custom-commands
 
 ## Step 2: Adding more test methods
 
 ### 2a. Ensure that anonymous users cannot access admin pages
 
-Now that we’re sure that the front page loads correctly, lets also check
-anonymous users cannot access the administration area. This test is very similar
-to the previous one, though instead we’re making a GET request to `/admin` and
-ensuring that the response code is 403 (forbidden).
+Now that we’re sure that the front page loads correctly, lets also check anonymous users cannot access the administration area. This test is very similar to the previous one, though instead we’re making a GET request to `/admin` and ensuring that the response code is 403 (forbidden).
 
-As this functionality is provided by Drupal core by default, this should pass
-automatically.
+As this functionality is provided by Drupal core by default, this should pass automatically.
 
 ```php
 /** @test */
@@ -342,16 +296,9 @@ public function the_admin_page_is_not_accessible_to_anonymous_users() {
 
 Now let’s check that an administrator user _can_ access the admin pages.
 
-This introduces some new concepts. We need to create a user to begin with, and
-assign it some permissions. Because tests may be included within Drupal core a
-contributed module, permissions need to be added to users directly as modules
-won’t know about roles that are specific to your site.
+This introduces some new concepts. We need to create a user to begin with, and assign it some permissions. Because tests may be included within Drupal core a contributed module, permissions need to be added to users directly as modules won’t know about roles that are specific to your site.
 
-The `BrowserTestBase` class gives access to a number of helper methods,
-including ones for creating and logging-in users (`createUser` and `drupalLogin`
-respectively). When creating a user, the first argument is an array of
-permission names to add. In this case, we can make the user an admin user by
-adding the `access administration pages` permission.
+The `BrowserTestBase` class gives access to a number of helper methods, including ones for creating and logging-in users (`createUser` and `drupalLogin` respectively). When creating a user, the first argument is an array of permission names to add. In this case, we can make the user an admin user by adding the `access administration pages` permission.
 
 ```php
 /** @test */
@@ -368,17 +315,13 @@ public function the_admin_page_is_accessible_by_admin_users() {
 }
 ```
 
-Again, as this functionality is provided by Drupal core by default, this should
-pass. However, we can be confident that the test is doing what’s needed by
-making it fail by removing or changing the assigned permissions, or not logging
-in the user before accessing the page.
+Again, as this functionality is provided by Drupal core by default, this should pass. However, we can be confident that the test is doing what’s needed by making it fail by removing or changing the assigned permissions, or not logging in the user before accessing the page.
 
 ## Step 3: Building a blog
 
 ### 3a. Anonymous users should be able to view the blog page
 
-Let’s start by building a blog page. This will look very similar to the admin
-page tests, but instead we’ll be testing the `/blog` page.
+Let’s start by building a blog page. This will look very similar to the admin page tests, but instead we’ll be testing the `/blog` page.
 
 ```php
 // tests/src/Functional/BlogPageTest.php
@@ -406,20 +349,15 @@ class BlogPageTest extends BrowserTestBase {
   }
 
 }
-
 ```
 
-This test will fail as there’s no route for `/blog` and no View that generates
-that page. Because of this, the response code will be a 404 instead of the 200
-that we want.
+This test will fail as there’s no route for `/blog` and no View that generates that page. Because of this, the response code will be a 404 instead of the 200 that we want.
 
 > Current response status code is 404, but 200 expected.
 
 ### 3b: Add a route for the blog page
 
-We’ll create a blog page using a custom route in the module. You could also do
-this with the Views module by creating a View with a page on that path, and
-exporting the configuration into the module’s `config/install` directory.
+We’ll create a blog page using a custom route in the module. You could also do this with the Views module by creating a View with a page on that path, and exporting the configuration into the module’s `config/install` directory.
 
 To add a route, we need to create a `my_module.routing.yml` file.
 
@@ -435,8 +373,7 @@ blog.page:
     _permission: access content
 ```
 
-We set our path to `/blog`, specify the Controller to use and which permission
-the needs to have to access the page.
+We set our path to `/blog`, specify the Controller to use and which permission the needs to have to access the page.
 
 If we run the tests now, we get an access denied error (403 response).
 
@@ -444,8 +381,7 @@ If we run the tests now, we get an access denied error (403 response).
 
 ### 3c: Fix permission error
 
-Because we need to node module to be able to access the `access content`
-permission, we need to enable it within our tests.
+Because we need to node module to be able to access the `access content` permission, we need to enable it within our tests.
 
 We can do this by adding it to the `$modules` array within the test.
 
@@ -456,8 +392,7 @@ We can do this by adding it to the `$modules` array within the test.
   ];
 ```
 
-Now the error has changed, and is now returning a 500 response because we’ve
-specified a Controller that doesn’t exist.
+Now the error has changed, and is now returning a 500 response because we’ve specified a Controller that doesn’t exist.
 
 > Current response status code is 500, but 200 expected.
 
@@ -469,9 +404,7 @@ Let’s create the `BlogPageController`.
 mkdir src/Controller
 ```
 
-Let’s start by creating a minimal controller, that returns an empty render
-array. Because we didn’t specify a method to use within the route file, we use
-PHP’s `__invoke()` method.
+Let’s start by creating a minimal controller, that returns an empty render array. Because we didn’t specify a method to use within the route file, we use PHP’s `__invoke()` method.
 
 ```php
 // src/Controller/BlogPageController
@@ -487,8 +420,7 @@ class BlogPageController {
 }
 ```
 
-This is enough for the test to pass. Though it just returns an empty page, it
-now returns the correct 200 response code.
+This is enough for the test to pass. Though it just returns an empty page, it now returns the correct 200 response code.
 
 > OK (1 test, 3 assertions)
 
@@ -498,8 +430,7 @@ This is how the page looks in a browser:
 
 ### 3e: Refactor, add more assertions
 
-Now that the test is passing, we can do some refactoring and make the test more
-robust by ensuring that the correct text is displayed.
+Now that the test is passing, we can do some refactoring and make the test more robust by ensuring that the correct text is displayed.
 
 ```diff
  public function the_blog_page_loads_for_anonymous_users_and_contains_the_right_text() {
@@ -513,14 +444,11 @@ robust by ensuring that the correct text is displayed.
   }
 ```
 
-The page title is created by the `_title` value within the routing file, but no
-page text has been added yet so this will cause the test to fail.
+The page title is created by the `_title` value within the routing file, but no page text has been added yet so this will cause the test to fail.
 
-> Behat\Mink\Exception\ResponseTextException: The text "Welcome to my blog!" was
-> not found anywhere in the text of the current page.
+> Behat\Mink\Exception\ResponseTextException: The text "Welcome to my blog!" was not found anywhere in the text of the current page.
 
-To fix this, we can return some text from the BlogPageController rather than an
-empty render array.
+To fix this, we can return some text from the BlogPageController rather than an empty render array.
 
 ```diff
   namespace Drupal\my_module\Controller;
@@ -551,9 +479,7 @@ Now the tests will pass because we’re returning the correct text.
 
 ### 4a Creating our first kernel test
 
-We’ll be using an ArticleRepository class to get the blog posts from the
-database, and this is also a good time to switch to writing kernel tests as we
-don’t need to check any responses from the browser.
+We’ll be using an ArticleRepository class to get the blog posts from the database, and this is also a good time to switch to writing kernel tests as we don’t need to check any responses from the browser.
 
 Within the tests directory, create a new `Kernel` directory.
 
@@ -580,20 +506,15 @@ class ArticleRepositoryTest extends EntityKernelTestBase {
 }
 ```
 
-This test looks very similar to the functional ones that we’ve already written,
-except it extends a different base class.
+This test looks very similar to the functional ones that we’ve already written, except it extends a different base class.
 
-This test is extending `EntityKernelTestBase` as we’re working with entities and
-this performs some useful setup steps for us. There are different base classes
-that can be used though based on what you need - including `KernelTestBase` and
-`ConfigFormTestBase`.
+This test is extending `EntityKernelTestBase` as we’re working with entities and this performs some useful setup steps for us. There are different base classes that can be used though based on what you need - including `KernelTestBase` and `ConfigFormTestBase`.
 
 ### 4b. Starting with an assertion
 
 Let’s write this test 'backwards' and start with the 'assert' phase.
 
-We know that the end objective for this test is to have 3 article nodes
-returned, so let’s add that assertion first.
+We know that the end objective for this test is to have 3 article nodes returned, so let’s add that assertion first.
 
 ```diff
   /** @test */
@@ -602,16 +523,13 @@ returned, so let’s add that assertion first.
   }
 ```
 
-As we aren’t yet returning any articles, or even creating that variable, the
-test is going to fail, but we can move on to getting articles.
+As we aren’t yet returning any articles, or even creating that variable, the test is going to fail, but we can move on to getting articles.
 
 > Undefined variable: articles
 
 ### 4c. Trying to use the ArticleRepository
 
-As the test name suggests, we’re going to be retrieving the articles from an
-`ArticleRepository` service - though this doesn’t exist yet, but let’s let the
-tests tell us that.
+As the test name suggests, we’re going to be retrieving the articles from an `ArticleRepository` service - though this doesn’t exist yet, but let’s let the tests tell us that.
 
 ```diff
   /** @test */
@@ -622,15 +540,11 @@ tests tell us that.
   }
 ```
 
-Because this is a kernel test, we have access to the container, and we can use
-it to retrieve our repository service.
+Because this is a kernel test, we have access to the container, and we can use it to retrieve our repository service.
 
-Running the test now gives us a different error, and tells us what the next step
-is:
+Running the test now gives us a different error, and tells us what the next step is:
 
-> Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException : You
-> have requested a non-existent service
-> "Drupal\Tests\my_module\Kernel\ArticleRepository".
+> Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException : You have requested a non-existent service "Drupal\Tests\my_module\Kernel\ArticleRepository".
 
 ### 4d. Creating an article repository
 
@@ -650,8 +564,7 @@ class ArticleRepository {
 }
 ```
 
-We also need to create a `my_module.services.yml` file that we can use to
-register the `ArticleRepository` as a service.
+We also need to create a `my_module.services.yml` file that we can use to register the `ArticleRepository` as a service.
 
 ```yaml
 # my_module.services.yml
@@ -660,8 +573,7 @@ services:
   Drupal\my_module\Repository\ArticleRepository: ~
 ```
 
-Within `ArticleRepositoryTest`, we need to add the import statement for the
-`ArticleRepository` as well enabling the module.
+Within `ArticleRepositoryTest`, we need to add the import statement for the `ArticleRepository` as well enabling the module.
 
 ```diff
 + use Drupal\my_module\Repository\ArticleRepository;
@@ -671,15 +583,13 @@ Within `ArticleRepositoryTest`, we need to add the import statement for the
 + ];
 ```
 
-We’ve fixed the missing repository, though we still haven’t created the
-`$articles` variable or given it a value yet.
+We’ve fixed the missing repository, though we still haven’t created the `$articles` variable or given it a value yet.
 
 > Undefined variable: articles
 
 ### 4e. Adding the `getAll()` method
 
-We’ll use a `getAll()` method on the repository to retrieve the articles from
-the database, and use the value of this for the `$articles` variable:
+We’ll use a `getAll()` method on the repository to retrieve the articles from the database, and use the value of this for the `$articles` variable:
 
 ```diff
   $repository = $this->container->get(ArticleRepository::class);
@@ -693,8 +603,7 @@ This method doesn’t exist on the repository yet, so the test will fail.
 > Error : Call to undefined method
 > Drupal\my_module\Repository\ArticleRepository::getAll()
 
-Let’s fix that by adding the `getAll()` method. For now, have it return an empty
-array.
+Let’s fix that by adding the `getAll()` method. For now, have it return an empty array.
 
 ```php
 // my_module/Repository/ArticleRepository.php
@@ -704,8 +613,7 @@ public function getAll(): array {
 }
 ```
 
-Now we’ve got everything in place, and the test failure is because we aren’t
-returning the correct number of articles.
+Now we’ve got everything in place, and the test failure is because we aren’t returning the correct number of articles.
 
 > Failed asserting that actual size 0 matches expected size 3.
 
@@ -713,9 +621,7 @@ We can fix this by building up the `ArticleRepository` class.
 
 ### 4f. Building up the ArticleRepository
 
-The `ArticleRepository` needs to return some articles. We can do this by
-injecting the `EntityTypeManager` and using it to return nodes from the
-`getAll()` method rather than the empty array.
+The `ArticleRepository` needs to return some articles. We can do this by injecting the `EntityTypeManager` and using it to return nodes from the `getAll()` method rather than the empty array.
 
 ```diff
 + use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -735,17 +641,11 @@ injecting the `EntityTypeManager` and using it to return nodes from the
   }
 ```
 
-Within our services file, we now need to add the `EntityTypeManager` as an
-argument so that it’s used to create the `ArticleRepository`. Currently we don’t
-have enough arguments.
+Within our services file, we now need to add the `EntityTypeManager` as an argument so that it’s used to create the `ArticleRepository`. Currently we don’t have enough arguments.
 
-> ArgumentCountError : Too few arguments to function
-> Drupal\my_module\Repository\ArticleRepository::\_\_construct(), 0 passed and
-> exactly 1 expected
+> ArgumentCountError : Too few arguments to function Drupal\my_module\Repository\ArticleRepository::\_\_construct(), 0 passed and exactly 1 expected
 
-The quickest way to do that is to enable autowiring for the ArticleRepository
-within `my_module.services.yml`. This will automatically inject services rather
-than needing to specify each argument individually.
+The quickest way to do that is to enable autowiring for the ArticleRepository within `my_module.services.yml`. This will automatically inject services rather than needing to specify each argument individually.
 
 ```diff
 - Drupal\my_module\Repository\ArticleRepository: ~
@@ -753,8 +653,7 @@ than needing to specify each argument individually.
 +   autowire: true
 ```
 
-> Drupal\Component\Plugin\Exception\PluginNotFoundException : The "node" entity
-> type does not exist.
+> Drupal\Component\Plugin\Exception\PluginNotFoundException : The "node" entity type does not exist.
 
 As we did previously, we need to enable the `node` module.
 
@@ -765,18 +664,15 @@ As we did previously, we need to enable the `node` module.
   ];
 ```
 
-The `ArticleRepository` is now working, but is still returning no articles -
-though this is because we haven’t created any inside the test.
+The `ArticleRepository` is now working, but is still returning no articles - though this is because we haven’t created any inside the test.
 
 > Failed asserting that actual size 0 matches expected size 3.
 
 ### 4g. Adding articles
 
-To test the ArticleRepository, we need articles to be created so that they can
-be returned.
+To test the ArticleRepository, we need articles to be created so that they can be returned.
 
-Within the `ArticleRepositoryTest` we can make use of one of a number of traits
-that are provided.
+Within the `ArticleRepositoryTest` we can make use of one of a number of traits that are provided.
 
 Within the class, enable the trait:
 
@@ -784,15 +680,13 @@ Within the class, enable the trait:
 + use NodeCreationTrait
 ```
 
-Include the import statement at the top of the file if it hasn’t been added
-automatically.
+Include the import statement at the top of the file if it hasn’t been added automatically.
 
 ```diff
 + use Drupal\Tests\node\Traits\NodeCreationTrait;
 ```
 
-This gives us a `createNode` method that we can use to create nodes by passing
-an array of values.
+This gives us a `createNode` method that we can use to create nodes by passing an array of values.
 
 As we need 3 articles, let’s create them.
 
@@ -806,8 +700,7 @@ The next error is a little cryptic:
 
 > Error : Call to a member function id() on bool
 
-Looking at the stack trace, this error is within `filter.module`, where it’s
-trying to call an `id()` method on a filter format.
+Looking at the stack trace, this error is within `filter.module`, where it’s trying to call an `id()` method on a filter format.
 
 ```php
 // filter.module
@@ -817,11 +710,9 @@ $format = reset($formats);
 return $format->id();
 ```
 
-As kernel tests don’t install configuration by default, we need to install the
-missing filter configuration.
+As kernel tests don’t install configuration by default, we need to install the missing filter configuration.
 
-As we’ll need this for all test methods in this case, we can use the `setUp()`
-method that will run before each test.
+As we’ll need this for all test methods in this case, we can use the `setUp()` method that will run before each test.
 
 ```diff
 + protected function setUp() {
@@ -835,8 +726,7 @@ method that will run before each test.
 
 We also need to create the `node_access` table as indicated by the next error:
 
-> Drupal\Core\Entity\EntityStorageException : SQLSTATE[HY000]: General error: 1
-> no such table: test90927710.node_access: DELETE FROM {node_access}
+> Drupal\Core\Entity\EntityStorageException : SQLSTATE[HY000]: General error: 1 no such table: test90927710.node_access: DELETE FROM {node_access}
 
 ```diff
   protected function setUp() {
@@ -858,8 +748,7 @@ We’ve successfully returned our three articles and this test now passes.
 
 The test is passing, but it currently returns _all_ nodes and not just articles.
 
-If we create some page nodes too, these will also be returned and the assertion
-will now fail.
+If we create some page nodes too, these will also be returned and the assertion will now fail.
 
 ```diff
   $this->createNode(['type' => 'article'])->save();
@@ -871,8 +760,7 @@ will now fail.
 
 > Failed asserting that actual size 5 matches expected size 3.
 
-We can make a change to the `ArticleRepository` to fix this, and ensure that
-we’re only loading and returning article nodes.
+We can make a change to the `ArticleRepository` to fix this, and ensure that we’re only loading and returning article nodes.
 
 ```diff
 - return $this->nodeStorage->loadMultiple();
@@ -883,8 +771,7 @@ we’re only loading and returning article nodes.
 
 ### 4i. Ensuring that only published articles are returned
 
-We now know that only article nodes are returned, but _all_ articles are being
-returned. On our blog, we only want to published articles to be displayed.
+We now know that only article nodes are returned, but _all_ articles are being returned. On our blog, we only want to published articles to be displayed.
 
 Let’s create another test for this.
 
@@ -898,9 +785,7 @@ Let’s create another test for this.
 + }
 ```
 
-We already know that only articles are returned, so in this test we can focus on
-the published status. We can create a number of articles, some which are
-published and some which are unpublished.
+We already know that only articles are returned, so in this test we can focus on the published status. We can create a number of articles, some which are published and some which are unpublished.
 
 ```diff
   /** @test */
@@ -918,13 +803,11 @@ published and some which are unpublished.
   }
 ```
 
-Because we have no filter on the published state, all the articles are returned
-including the unpublished ones.
+Because we have no filter on the published state, all the articles are returned including the unpublished ones.
 
 > Failed asserting that actual size 5 matches expected size 3.
 
-We can again update the `ArticleRepository` to add this extra condition to
-filter out any unpublished articles.
+We can again update the `ArticleRepository` to add this extra condition to filter out any unpublished articles.
 
 ```diff
 + use Drupal\node\Entity\Node;
@@ -943,11 +826,9 @@ With this added, the test passes again.
 
 ### 4j. Ensuring that articles are returned in the correct order
 
-As per our acceptance criteria, we need the articles to be returned based on
-their created date, so let’s create another test.
+As per our acceptance criteria, we need the articles to be returned based on their created date, so let’s create another test.
 
-In this test, let’s ensure assert that some article node IDs are returned within
-a specific order.
+In this test, let’s ensure assert that some article node IDs are returned within a specific order.
 
 ```diff
 + /** @test */
@@ -969,9 +850,7 @@ We can use the same `getAll()` method, and get the node IDs from the array keys.
   }
 ```
 
-Use `createNode()` again to create some article nodes, each with a different
-`created` date to match our assertion. This is to ensure that the test doesn’t
-pass by default.
+Use `createNode()` again to create some article nodes, each with a different `created` date to match our assertion. This is to ensure that the test doesn’t pass by default.
 
 ```diff
   /** @test */
@@ -990,8 +869,7 @@ pass by default.
   }
 ```
 
-This test fails as expected, as the nodes are returned in their default order,
-by node ID.
+This test fails as expected, as the nodes are returned in their default order, by node ID.
 
 > Failed asserting that two arrays are identical. --- Expected +++ Actual @@ @@
 > Array &0 (
@@ -1008,8 +886,7 @@ by node ID.
 > * 3 => 4
 > * 4 => 5 )
 
-To order the articles by their created date, we can update the `getAll()` method
-within the `ArticleRepository`.
+To order the articles by their created date, we can update the `getAll()` method within the `ArticleRepository`.
 
 ```diff
   public function getAll(): array {
@@ -1028,15 +905,13 @@ within the `ArticleRepository`.
   }
 ```
 
-The nodes are now ordered by their created date, and in the correct order to
-match the assertion.
+The nodes are now ordered by their created date, and in the correct order to match the assertion.
 
 > OK (1 test, 6 assertions)
 
 ### 4k. Linking up the repository to the BlogPageController
 
-Now that our `ArticleRepository` tests are passing, we can use it within
-`BlogPageController` so that articles are displayed on the page.
+Now that our `ArticleRepository` tests are passing, we can use it within `BlogPageController` so that articles are displayed on the page.
 
 Let’s add `BlogPageController` as a service and enable autowiring.
 
@@ -1051,8 +926,7 @@ Let’s add `BlogPageController` as a service and enable autowiring.
       autowire: true
 ```
 
-Now we can inject the `ArticleRepository` and use it to load and render the
-articles on the page.
+Now we can inject the `ArticleRepository` and use it to load and render the articles on the page.
 
 ```diff
 
@@ -1110,8 +984,7 @@ In the browser, we should see our list of articles.
 
 ### 5a: Creating an ArticleWrapper
 
-The final thing that we’re going to do is create a wrapper class for articles so
-that we can add additional methods.
+The final thing that we’re going to do is create a wrapper class for articles so that we can add additional methods.
 
 ```bash
 mkdir -p tests/src/Unit/Wrapper
@@ -1128,8 +1001,7 @@ class ArticleWrapperTest extends UnitTestCase {
 }
 ```
 
-The first thing that we’re going to check is that we can wrap an article node
-and then retrieve it again.
+The first thing that we’re going to check is that we can wrap an article node and then retrieve it again.
 
 ```php
 /** @test */
@@ -1177,8 +1049,7 @@ Currently, we don’t yet have an article to wrap.
 
 > Undefined variable: article
 
-Because this is a unit test which has no access to the database, we can’t use
-the `createNode()` method or `Node::create()` so we need to create a mock node.
+Because this is a unit test which has no access to the database, we can’t use the `createNode()` method or `Node::create()` so we need to create a mock node.
 
 ```diff
 + use Drupal\node\NodeInterface;
@@ -1190,9 +1061,7 @@ This satisfies the instance assertion, but the other assertions are failing.
 
 > Failed asserting that null is identical to 5.
 
-In order for this to pass, we need to specify what value each method will method
-will return (e.g. which node ID and which bundle type) so that these values are
-populated when used within the production code.
+In order for this to pass, we need to specify what value each method will method will return (e.g. which node ID and which bundle type) so that these values are populated when used within the production code.
 
 ```diff
   $article = $this->createMock(NodeInterface::class);
@@ -1204,8 +1073,7 @@ populated when used within the production code.
 
 ### 5b. Ensure that we’re only wrapping articles
 
-The ArticleWrapper is only supposed to be used for wrapping articles, so we want
-to throw an Exception if a different type of node is used.
+The ArticleWrapper is only supposed to be used for wrapping articles, so we want to throw an Exception if a different type of node is used.
 
 Let’s create a page node and assert that an Exception should be thrown.
 
@@ -1225,8 +1093,7 @@ Because we’re currently not throwing an Exception, the assertion fails.
 
 > Failed asserting that exception of type "InvalidArgumentException" is thrown.
 
-Within `ArticleWrapper`, add a check using the `bundle()` method and throw an
-Exception if it is not an article.
+Within `ArticleWrapper`, add a check using the `bundle()` method and throw an Exception if it is not an article.
 
 ```diff
   public function __construct(NodeInterface $node) {
@@ -1249,16 +1116,11 @@ If the Exception is thrown, the test will pass.
 
 ### 5c. Determine if articles are publishable
 
-Let’s imagine that there is a rule that articles less than 3 days old are not
-eligible to be published and we want to add an `isPublishable()` method that
-will contain this logic and determine whether or not an article is publishable.
+Let’s imagine that there is a rule that articles less than 3 days old are not eligible to be published and we want to add an `isPublishable()` method that will contain this logic and determine whether or not an article is publishable.
 
-We need access to the `Time` class to get the system time, so this is added as
-an argument to the constructor and used within `isPublishable()` to compare the
-created time of the article to the current time.
+We need access to the `Time` class to get the system time, so this is added as an argument to the constructor and used within `isPublishable()` to compare the created time of the article to the current time.
 
 ```diff
-
 + use Drupal\Component\Datetime\TimeInterface;
   use Drupal\node\NodeInterface;
 
@@ -1285,8 +1147,7 @@ created time of the article to the current time.
   }
 ```
 
-In the test, this argument also needs to be mocked. As this will need to be
-added to each test, this can be done within the `setUp()` method again.
+In the test, this argument also needs to be mocked. As this will need to be added to each test, this can be done within the `setUp()` method again.
 
 ```php
 protected function setUp() {
@@ -1294,9 +1155,7 @@ protected function setUp() {
 }
 ```
 
-We want to compare against a number of dates to ensure that this is working as
-expected. Rather than writing separate tests, we can use a data provider. This
-is a method that returns data to be passed to the tests as parameters.
+We want to compare against a number of dates to ensure that this is working as expected. Rather than writing separate tests, we can use a data provider. This is a method that returns data to be passed to the tests as parameters.
 
 ```php
 public function articleCreatedDateProvider() {
@@ -1309,8 +1168,7 @@ public function articleCreatedDateProvider() {
 }
 ```
 
-Use the `@dataProvider` annotation for the test to specify the method to use,
-and add the parameters to the test.
+Use the `@dataProvider` annotation for the test to specify the method to use, and add the parameters to the test.
 
 ```php
 /**
@@ -1338,17 +1196,11 @@ public function articles_created_less_than_3_days_ago_are_not_publishable(
 }
 ```
 
-We can use `$offset` value to modify the returned date from `getCreatedTime()`,
-and use `$expected` to make the assertion against `isPublishable()`.
+We can use `$offset` value to modify the returned date from `getCreatedTime()`, and use `$expected` to make the assertion against `isPublishable()`.
 
-The test is run, is then run against each set of data and passes or fails
-accordingly.
+The test is run, is then run against each set of data and passes or fails accordingly.
 
-> - Articles created less than 3 days ago are not publishable with data set #0
->   [23.76 ms]
-> - Articles created less than 3 days ago are not publishable with data set #1
->   [0.32 ms]
-> - Articles created less than 3 days ago are not publishable with data set #2
->   [0.25 ms]
-> - Articles created less than 3 days ago are not publishable with data set #3
->   [0.37 ms]
+> - Articles created less than 3 days ago are not publishable with data set #0 [23.76 ms]
+> - Articles created less than 3 days ago are not publishable with data set #1 [0.32 ms]
+> - Articles created less than 3 days ago are not publishable with data set #2 [0.25 ms]
+> - Articles created less than 3 days ago are not publishable with data set #3 [0.37 ms]
