@@ -49,7 +49,7 @@
 
 ## Contribution
 
-Please feel free to create issue and/or submit pull requests to this repository whilst working through these instructions. Any contributions would be greatly appreciated!
+Please feel free to create issues and/or submit pull requests to this repository whilst working through these instructions. Any contributions would be greatly appreciated!
 
 ## Feedback
 
