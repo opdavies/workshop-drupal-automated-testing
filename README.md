@@ -694,6 +694,9 @@ As we need 3 articles, let’s create them.
 + $this->createNode(['type' => 'article'])->save();
 + $this->createNode(['type' => 'article'])->save();
 + $this->createNode(['type' => 'article'])->save();
+
+  $repository = $this->container->get(ArticleRepository::class);
+  $articles = $repository->getAll();
 ```
 
 The next error is a little cryptic:
