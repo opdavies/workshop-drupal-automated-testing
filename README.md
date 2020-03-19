@@ -151,7 +151,7 @@ You don’t need to install Drupal, it just needs to be able to connect to the d
 Create a directory for the new module:
 
 ```
-mkdir -p web/modules/my_module
+mkdir -p web/modules/custom/my_module
 ```
 
 ### 1b. Create an `.info.yml` file for the module
@@ -234,7 +234,7 @@ We also need to configure the database for Drupal to connect to and use when run
 cd web
 
 # Run the tests
-../vendor/bin/phpunit -c core modules/my_module
+../vendor/bin/phpunit -c core modules/custom/my_module
 ```
 
 You should see a summary of the number of tests and assertions that were run. This is the expected output if all of the tests pass:
@@ -268,7 +268,7 @@ This approach can be useful if you want to run other commands in addition to PHP
 If needed, you can still pass additional arguments and options to the command by appending `--` followed by the arguments.
 
 ```bash
-symfony composer test:phpunit -- modules/my_module \
+symfony composer test:phpunit -- modules/custom/my_module \
   --stop-on-failure \
   --filter=the_front_page_loads_for_anonymous_users
 ```
