@@ -89,6 +89,8 @@ https://symfony.com/doc/current/setup/symfony_server.html
 - <https://github.com/opdavies/symfony-server-drupal-example>
 - <https://opdavi.es/symfony-server> - blog post
 
+If you’re not using the Symfony web server, then remove the `symfony` prefix from all of the commands below.
+
 ## The different types of available tests
 
 - **Functional** (web, feature) - tests behaviour and functionality, makes HTTP requests to the webserver and has access to the database and other services via the service container. Slower to run.
