@@ -651,6 +651,9 @@ The quickest way to do that is to enable autowiring for the ArticleRepository wi
 
 ```diff
 - Drupal\my_module\Repository\ArticleRepository: ~
++ Drupal\Core\Entity\EntityTypeManagerInterface:
++   alias: entity_type.manager
++
 + Drupal\my_module\Repository\ArticleRepository:
 +   autowire: true
 ```
