@@ -9,7 +9,7 @@
 - [Using the Symfony web server for local development](#using-the-symfony-web-server-for-local-development)
 - [The different types of available tests](#the-different-types-of-available-tests)
 - [Different approaches to testing](#different-approaches-to-testing)
-- [A structure of a test](#a-structure-of-a-test)
+- [The structure of a test](#the-structure-of-a-test)
 - [What is Test Driven Development?](#what-is-test-driven-development)
 - [Acceptance criteria](#acceptance-criteria)
 - [Step 0: Preparation](#step-0-preparation)
@@ -101,7 +101,7 @@ https://symfony.com/doc/current/setup/symfony_server.html
 - Inside-out (testing pyramid) - mostly unit tests, some integration tests, few functional tests.
 - Outside-in (testing trophy) - mostly functional tests, some integration tests, few unit tests. More flexible, easier to refactor.
 
-## Structure of a test
+## The structure of a test
 
 - **Arrange** - set up the environment. Create users, nodes, set up dependencies
 - **Act** - perform an action
