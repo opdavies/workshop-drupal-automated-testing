@@ -1158,14 +1158,6 @@ We need access to the `Time` class to get the system time, so this is added as a
   }
 ```
 
-In the test, this argument also needs to be mocked. As this will need to be added to each test, this can be done within the `setUp()` method again.
-
-```php
-protected function setUp() {
-  $this->time = $this->createMock(TimeInterface::class);
-}
-```
-
 We want to compare against a number of dates to ensure that this is working as expected. Rather than writing separate tests, we can use a data provider. This is a method that returns data to be passed to the tests as parameters.
 
 ```php
@@ -1181,6 +1173,8 @@ public function articleCreatedDateProvider() {
 
 Use the `@dataProvider` annotation for the test to specify the method to use, and add the parameters to the test.
 
+We also need to create a mock for `TimeInterface` so that it can be passed into the article wrapper, and so that methods on it can return certain values.
+
 ```php
 /**
  * @test
@@ -1190,7 +1184,9 @@ public function articles_created_less_than_3_days_ago_are_not_publishable(
   string $offset,
   bool $expected
 ) {
-  $this->time->method('getRequestTime')->willReturn(
+  $time = $this->createMock(TimeInterface::class);
+
+  $time->method('getRequestTime')->willReturn(
     (new \DateTime())->getTimestamp()
   );
 
@@ -1201,7 +1197,7 @@ public function articles_created_less_than_3_days_ago_are_not_publishable(
     (new \DateTime())->modify($offset)->getTimestamp()
   );
 
-  $articleWrapper = new ArticleWrapper($this->time, $article);
+  $articleWrapper = new ArticleWrapper($time, $article);
 
   $this->assertSame($expected, $articleWrapper->isPublishable());
 }
@@ -1215,3 +1211,53 @@ The test is run, is then run against each set of data and passes or fails accord
 > - Articles created less than 3 days ago are not publishable with data set #1 [0.32 ms]
 > - Articles created less than 3 days ago are not publishable with data set #2 [0.25 ms]
 > - Articles created less than 3 days ago are not publishable with data set #3 [0.37 ms]
+
+The other tests will also need to be updated to mock `TimeInterface` and pass it to the article wrapper.
+
+## 5d: Refactoring the unit tests
+
+With the unit tests passing, we can refactor them and simplify things by extracting a method for creating an article wrapper.
+
+As each test will need the mocked time, this can be moved into a `setUp` method, and we can use `$this->time` instead within the test.
+
+```php
+private $time;
+
+protected function setUp() {
+  parent::setUp();
+
+  $this->time = $this->createMock(Time::class);
+}
+```
+
+```diff
+- $time->method('getRequestTime')->willReturn(
++ $this->time->method('getRequestTime')->willReturn(
+    (new \DateTime())->getTimestamp()
+  );
+```
+
+To make it simpler to create an article wrapper, we can create a helper method for that. This will also be responsible for creating and injecting any dependencies.
+
+```php
+private function createArticleWrapper(NodeInterface $article): ArticleWrapper {
+  return new ArticleWrapper($this->time, $article);
+}
+```
+
+Now we can update the tests to use the new `createArticleWrapper()` method:
+
+```diff
+- $time = $this->createMock(TimeInterface::class);
+- $articleWrapper = new ArticleWrapper($time, $article);
++ $articleWrapper = $this->createArticleWrapper($article);
+
+- $time = $this->createMock(TimeInterface::class);
+- new ArticleWrapper($time, $page);
++ $articleWrapper = $this->createArticleWrapper($page);
+
+- $articleWrapper = new ArticleWrapper($time, $article);
++ $articleWrapper = $this->createArticleWrapper($article);
+```
+
+If the refactor was successful, the tests will still pass.
