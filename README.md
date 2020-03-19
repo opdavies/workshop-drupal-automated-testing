@@ -904,12 +904,15 @@ To order the articles by their created date, we can update the `getAll()` method
       'type' => 'article',
     ]);
 +
-+   // Sort the articles by their created date.
++   $this->sortByCreatedDate($articles);
++
++   return $articles;
++ }
++
++ private function sortByCreatedDate(array &$articles): void {
 +   uasort($articles, function (NodeInterface $a, NodeInterface $b): bool {
 +     return $a->getCreatedTime() < $b->getCreatedTime();
 +   });
-+
-+   return $articles;
   }
 ```
 
