@@ -234,10 +234,10 @@ We also need to configure the database for Drupal to connect to and use when run
 
 ```diff
 - <env name="SIMPLETEST_BASE_URL" value=""/>
-+ <env name="SIMPLETEST_BASE_URL" value="https://localhost:8000"/>
++ <env name="SIMPLETEST_BASE_URL" value="http://localhost"/>
 
 - <env name="SIMPLETEST_DB" value=""/>
-+ <env name="SIMPLETEST_DB" value="sqlite://localhost//tmp/test.sqlite"/>
++ <env name="SIMPLETEST_DB" value="sqlite://localhost//dev/shm/test.sqlite"/>
 ```
 
 ### 1f. Running the tests
