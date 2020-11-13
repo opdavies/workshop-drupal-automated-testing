@@ -302,7 +302,7 @@ As this functionality is provided by Drupal core by default, this should pass au
 public function the_admin_page_is_not_accessible_to_anonymous_users() {
   $this->drupalGet('admin');
 
-  $this->assertResponse(Response::HTTP_FORBIDDEN);
+  $this->assertSession()->statusCodeEquals(Response::HTTP_FORBIDDEN);
 }
 ```
 
@@ -325,7 +325,7 @@ public function the_admin_page_is_accessible_by_admin_users() {
 
   $this->drupalGet('admin');
 
-  $this->assertResponse(Response::HTTP_OK);
+  $this->assertSession()->statusCodeEquals(Response::HTTP_OK);
 }
 ```
 
