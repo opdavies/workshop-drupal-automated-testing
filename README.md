@@ -266,14 +266,14 @@ To simplify running tests, the command could be simplified by [adding a script][
 
 ```json
 "scripts": {
-    "test:phpunit": "cd web && ../vendor/bin/phpunit -c core --verbose --testdox",
+    "test:phpunit": "phpunit --verbose --testdox --colors=always",
     "test": [
         "@test:phpunit"
     ]
 }
 ```
 
-This means that you can run just `ddev composer test:phpunit` or `ddev composer test` and it will automatically move into the right directory and execute the test command.
+This means that you can run just `ddev composer test:phpunit` or `ddev composer test` and it will execute the `phpunit` command.
 
 This approach can be useful if you want to run other commands in addition to PHPUnit such as PHPStan, PHP Code Sniffer or Drupal Check. Each command can be added to the script and they will each be executed.
 
