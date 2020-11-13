@@ -6,7 +6,8 @@
 - [Contribution](#contribution)
 - [Feedback](#feedback)
 - [Creating a new Drupal project with Composer](#creating-a-new-drupal-project-with-composer)
-- [Using the Symfony web server for local development](#using-the-symfony-web-server-for-local-development)
+- [Using DDEV for local development](#using-ddev-for-local-development)
+- [Using the PHP web server for local development](#using-the-php-web-server-for-local-development)
 - [The different types of available tests](#the-different-types-of-available-tests)
 - [Different approaches to testing](#different-approaches-to-testing)
 - [The structure of a test](#the-structure-of-a-test)
@@ -77,19 +78,31 @@ You should now have files present including `web/index.php` and `vendor/bin/phpu
 
 **Note:** Development dependencies, including PHPUnit, should only be installed locally and should not be present on public servers. Doing so would present a security risk to your application.
 
-## Using the Symfony web server for local development
+## Using DDEV for local development
 
-https://symfony.com/doc/current/setup/symfony_server.html
+- Docker based development environment for PHP applications (Drupal, WordPress, Magento etc).
+- More information at <https://www.ddev.com>.
+- Documentation at <https://ddev.readthedocs.io>.
+- Installation via Homebrew on Linux and macOS, and Chocolatey on Windows. More information at <https://www.ddev.com/get-started>.
+- Example at <https://github.com/opdavies/workshop-drupal-automated-testing-code>.
 
-- Part of the Symfony CLI.
-- Download from <https://symfony.com/download>.
-- Docker provides the integration with MySQL.
-- Faster performance compared to mounting files within Docker volumes.
-- Need `docker-compose.yml` to provide the database service, `.php-version` to set the version of PHP
-- <https://github.com/opdavies/symfony-server-drupal-example>
-- <https://opdavi.es/symfony-server> - blog post
+To run PHPUnit within DDEV, we can prefix the command with `ddev exec`:
 
-If you’re not using the Symfony web server, then remove the `symfony` prefix from all of the commands below.
+```
+$ ddev exec vendor/bin/phpunit
+```
+
+## Using the PHP web server for local development
+
+If you have all of [Drupal's required PHP extensions](https://www.drupal.org/docs/system-requirements/php-requirements#extensions) installed and would like better performance (particularly on macOS), you could use the PHP's local web server.
+
+As we're going to use SQLite to run the tests, there's no need for a connection to a MySQL database or another service.
+
+If you need to override any environment variables, you can do so before running the command:
+
+```
+$ SIMPLETEST_BASE_URL=http://localhost:8000 vendor/bin/phpunit
+```
 
 ## The different types of available tests
 
