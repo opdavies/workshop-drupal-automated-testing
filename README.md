@@ -188,24 +188,29 @@ mkdir -p tests/src/Functional
 ### 1d. Create your first test case
 
 ```php
-// MyModuleTest.php
+<?php
 
 namespace Drupal\Tests\my_module\Functional;
 
 use Drupal\Tests\BrowserTestBase;
 use Symfony\Component\HttpFoundation\Response;
 
-class MyModuleTest extends BrowserTestBase {
+class FrontPageTest extends BrowserTestBase {
 
-  protected $defaultTheme = 'stark';
+  protected static $modules = ['node', 'views'];
 
-  protected static $modules = ['my_module'];
-
-   /** @test */
+  /** @test */
   public function the_front_page_loads_for_anonymous_users() {
+    $this->config('system.site')
+      ->set('page.front', '/node')
+      ->save(TRUE);
+
     $this->drupalGet('<front>');
 
-    $this->assertResponse(Response::HTTP_OK);
+    $assert = $this->assertSession();
+    $assert->statusCodeEquals(Response::HTTP_OK);
+    $assert->pageTextContains('Welcome to Drupal');
+    $assert->pageTextContains('No front page content has been created yet.');
   }
 
 }
@@ -241,20 +246,16 @@ We also need to configure the database for Drupal to connect to and use when run
 ### 1f. Running the tests
 
 ```bash
-# Make sure you’re in the right place
-cd web
-
-# Run the tests
-../vendor/bin/phpunit -c core modules/custom/my_module
+$ vendor/bin/phpunit modules/custom/my_module
 ```
 
 You should see a summary of the number of tests and assertions that were run. This is the expected output if all of the tests pass:
 
-> OK (1 test, 2 assertions)
+> OK (1 test, 3 assertions)
 
 If a test failed, the output would show the class and method name for the failing test, and give a summary of the failure.
 
-> Drupal\Tests\my_module\Functional\MyModuleTest::testThatTheFrontPageLoads
+> Drupal\Tests\my_module\Functional\FrontPageTest::the_front_page_loads_for_anonymous_users
 > Behat\Mink\Exception\ExpectationException: Current response status code is 404, but 200 expected.
 
 Other useful options include `--stop-on-failure`, `--filter` and `--testdox`.
