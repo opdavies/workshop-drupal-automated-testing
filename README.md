@@ -53,7 +53,7 @@ Please feel free to create issues and/or submit pull requests to this repository
 
 ## Feedback
 
-Feedback would also be appreciated! You can contact me via <oliver+drupalcamp.training@oliverdavies.uk>, [@opdavies on Twitter](https://twitter.com/opdavies) or `opdavies` on Drupal Slack.
+Feedback would also be appreciated! You can contact me via <oliver@odwd.uk>, [@opdavies on Twitter](https://twitter.com/opdavies) or `opdavies` on Drupal Slack.
 
 ## Introduction
 
