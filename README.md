@@ -176,9 +176,7 @@ Within the `my_module` directory, create the file and paste in the following con
 ```yaml
 name: My Module
 type: module
-core: 8.x
 core_version_requirement: ^8 || ^9
-package: Custom
 ```
 
 ### 1c. Create the directory structure for tests
