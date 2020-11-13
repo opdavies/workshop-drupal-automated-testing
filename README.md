@@ -145,17 +145,17 @@ This module will be used to demonstrate how to take a test-driven approach to de
 
 ## Step 0: Preparation
 
-To begin with, we need the site to be running. If using the Symfony server, run these commands:
+To begin, we need the site to be running.
 
 ```bash
-# Start the service containers
-docker-compose up -d
+# Using DDEV
+ddev start
 
-# Start the local web server
-symfony serve -d
+# Using PHP's web server
+php -S localhost:8000 -t web
 ```
 
-You don’t need to install Drupal, it just needs to be able to connect to the database.
+You don’t need to install Drupal. It just needs to be able to connect to the database.
 
 ## Step 1: Writing your first test
 
@@ -274,19 +274,19 @@ To simplify running tests, the command could be simplified by [adding a script][
 }
 ```
 
-This means that you can run just `symfony composer test:phpunit` or `symfony composer test` and it will automatically move into the right directory and execute the test command.
+This means that you can run just `ddev composer test:phpunit` or `ddev composer test` and it will automatically move into the right directory and execute the test command.
 
 This approach can be useful if you want to run other commands in addition to PHPUnit such as PHPStan, PHP Code Sniffer or Drupal Check. Each command can be added to the script and they will each be executed.
 
 If needed, you can still pass additional arguments and options to the command by appending `--` followed by the arguments.
 
 ```bash
-symfony composer test:phpunit -- modules/custom/my_module \
+ddev composer test:phpunit -- modules/custom/my_module \
   --stop-on-failure \
   --filter=the_front_page_loads_for_anonymous_users
 ```
 
-Locally, make sure that the command is prefixed with `symfony` if you are using the Symfony web server to ensure that the correct PHP version etc is used.
+Locally, ensure that the command is prefixed with `ddev` so that it is run within the container. This ensures that the correct PHP version etc is used.
 
 [composer scripts]: https://getcomposer.org/doc/articles/scripts.md#writing-custom-commands
 
