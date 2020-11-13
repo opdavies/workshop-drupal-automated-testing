@@ -770,7 +770,7 @@ We also need to create the `node_access` table as indicated by the next error:
 
 We’ve successfully returned our three articles and this test now passes.
 
-> OK (1 test, 6 assertions)
+> OK (1 test, 11 assertions)
 
 ### 4h. Making this test less brittle
 
@@ -938,7 +938,7 @@ To order the articles by their created date, we can update the `getAll()` method
 
 The nodes are now ordered by their created date, and in the correct order to match the assertion.
 
-> OK (1 test, 6 assertions)
+> OK (1 test, 11 assertions)
 
 ### 4k. Linking up the repository to the BlogPageController
 
