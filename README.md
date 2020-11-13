@@ -338,6 +338,8 @@ Again, as this functionality is provided by Drupal core by default, this should 
 Let’s start by building a blog page. This will look very similar to the admin page tests, but instead we’ll be testing the `/blog` page.
 
 ```php
+<?php
+
 // tests/src/Functional/BlogPageTest.php
 
 namespace Drupal\my_module\Functional;
@@ -421,6 +423,8 @@ mkdir src/Controller
 Let’s start by creating a minimal controller, that returns an empty render array. Because we didn’t specify a method to use within the route file, we use PHP’s `__invoke()` method.
 
 ```php
+<?php
+
 // src/Controller/BlogPageController
 
 namespace Drupal\my_module\Controller;
@@ -504,6 +508,8 @@ mkdir tests/src/Kernel
 And an `ArticleRepositoryTest` class.
 
 ```php
+<?php
+
 // tests/src/Kernel/ArticleRepositoryTest.php
 
 namespace Drupal\Tests\my_module\Kernel;
@@ -569,6 +575,8 @@ mkdir src/Repository
 To begin with, let’s create a basic `ArticleRepository` class.
 
 ```php
+<?php
+
 // my_module/src/Repository/ArticleRepository
 
 namespace Drupal\my_module\Repository;
