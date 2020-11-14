@@ -44,10 +44,6 @@
   - [4j. Ensuring that only published articles are returned](#4j-ensuring-that-only-published-articles-are-returned)
   - [4k. Ensuring that articles are returned in the correct order](#4k-ensuring-that-articles-are-returned-in-the-correct-order)
   - [4l. Linking up the repository to the BlogPageController](#4l-linking-up-the-repository-to-the-blogpagecontroller)
-- [Step 5: Wrapping up with unit tests](#step-5-wrapping-up-with-unit-tests)
-  - [5a. Creating an ArticleWrapper](#5a-creating-an-articlewrapper)
-  - [5b. Ensure that we’re only wrapping articles](#5b-ensure-that-were-only-wrapping-articles)
-  - [5c. Determine if articles are publishable](#5c-determine-if-articles-are-publishable)
 
 ## Contribution
 
@@ -1045,273 +1041,232 @@ In the browser, we should see our list of articles.
 
 ![](docs/images/3.png)
 
-## Step 5: Wrapping up with unit tests
+## Step 5: Creating a custom Post class
 
-### 5a: Creating an ArticleWrapper
+What if we wanted to return a custom `Post` class from the repository with its own data and logic rather than a generic Drupal node? As the repository is responsible for finding and returning nodes, we can make changes there and return what we want.
 
-The final thing that we’re going to do is create a wrapper class for articles so that we can add additional methods.
+Let's start by changing one of our existing tests.
 
-```bash
-mkdir -p tests/src/Unit/Wrapper
+### 5a: Changing the existing test
+
+In `ArticleRepositoryTest` we have existing assertions as to what type of object is returned. Currently, this should be an instance of a `Node::class`. Let's change that to a new `Post::class` and also change the `label` method to a more desciriptive `getTitle()`.
+
+```diff
+  $this->assertCount(1, $articles);
+  $this->assertIsObject($articles[1]);
+- $this->assertInstanceOf(Node::class, $articles[1]);
+- $this->assertSame('Test post', $articles[1]->label());
++ $this->assertInstanceOf(Post::class, $articles[1]);
++ $this->assertSame('Test post', $articles[1]->getTitle());
+```
+As we have no `Post` class and are still returning the original nodes from the Repository, this will cause the test to now fail.
+
+> 1) Drupal\Tests\my_module\Kernel\ArticleRepositoryTest::it_returns_blog_posts
+  PHPUnit\Framework\Exception: Argument #1 (No Value) of PHPUnit\Framework\Assert::assertInstanceOf() must be a class or interface name
+
+### 5b: Adding a Post class
+
+Create a new `Entity` directory and a new `Post.php` file inside it.
+
+```
+mkdir -p src/Entity
 ```
 
 ```php
-// tests/src/Unit/Wrapper/ArticleWrapperTest
+<?php
 
-namespace Drupal\Tests\my_module\Unit\Wrapper;
+namespace Drupal\my_module\Entity;
+
+class Post {
+  
+}
+```
+
+As the class is within the `Entity` directory we also need to include that within the class' namespace.
+
+Now we can go back to `ArticleRepositoryTest` and add the import.
+
+```diff
++ use Drupal\my_module\Entity\Post;
+```
+
+Now the test failure should change as we're still returning standard Drupal nodes:
+
+> Drupal\Tests\my_module\Kernel\ArticleRepositoryTest::it_returns_blog_posts
+> Failed asserting that Drupal\node\Entity\Node Object (...) is an instance of class "Drupal\my_module\Entity\Post".
+
+### 5c: Returning Post classes
+
+To pass this failure, we need to update the Repository and return instances of `Post` rather than the standard Drupal nodes.
+
+We can do that in the `getAll()` method:
+
+```diff
+- return $articles;
++ return array_map(function (NodeInterface $node) {
++   return new Post();
++ }, $articles);
+```
+
+This will return an array of `Post` objects, and change the failure message as we're calling a method that we've not yet added.
+
+> Error: Call to undefined method
+> Drupal\my_module\Entity\Post::getTitle()
+
+To do this, let's start by adding a Unit test.
+
+## Step 6: Unit testing the Post class
+
+### 6a: Creating a PostTest class
+
+Create a `Unit` directory, an `Entity` sub-directory, and a `PostTest.php` file. Typically, unit tests match the directory structure in `src` and the class name that they're testing.
+
+```
+mkdir -p tests/src/Unit/Entity
+```
+
+```php
+<?php
+
+namespace Drupal\Tests\my_module\Unit\Entity;
 
 use Drupal\Tests\UnitTestCase;
 
-class ArticleWrapperTest extends UnitTestCase {
+class PostTest extends UnitTestCase {
+
 }
 ```
 
-The first thing that we’re going to check is that we can wrap an article node and then retrieve it again.
+For the first test case, let's ensure that the title is returned.
 
 ```php
 /** @test */
-public function it_can_return_the_article() {
-  $articleWrapper = new ArticleWrapper($article);
+public function it_gets_the_title() {
+  $post = new Post();
 
-  $this->assertInstanceOf(NodeInterface::class, $articleWrapper->getOriginal());
-  $this->assertSame(5, $articleWrapper->getOriginal()->id());
-  $this->assertSame('article', $articleWrapper->getOriginal()->bundle());
+  $this->assertSame('Test post', $post->getTitle());
 }
 ```
 
-Lets create the `ArticleWrapper`:
+If we run this, we get an undefined method error:
+
+> Error: Call to undefined method Drupal\my_module\Entity\Post::getTitle()
+
+### 6b: Adding the getTitle() method
+
+Within the `Post` class, add a `getTitle()` method which will return a string. For now, let's return an empty string:
 
 ```php
-// src/Wrapper/ArticleWrapper
+public function getTitle(): string {
+  return '';
+}
+```
 
-namespace Drupal\my_module\Wrapper;
+> Failed asserting that two strings are identical.
+> --- Expected
+> +++ Actual
+> @@ @@
+> -'Test post'
+> +''
 
-use Drupal\node\NodeInterface;
+This will cause a different failure as the expected title doesn't match the returned empty string.
 
-class ArticleWrapper {
+To get the real title, we'll need to pass the article node into the `Post` class so that we can reference it.
 
-  private $article;
+### 6c: Returning the real title
+
+To get the post's title, we need to add a constructor to the `Post` class which accepts the original node, which we can then use to get its title.
+
+```php
+class Post {
+
+  private $node;
 
   public function __construct(NodeInterface $node) {
-    $this->article = $node;
+    $this->node = $node;
   }
 
-  public function getOriginal(): NodeInterface {
-    return $this->article;
+  public function getTitle(): string {
+    return $this->node->label();
   }
 
 }
 ```
 
-In the `ArticleWrapperTest`, add the import statement for the wrapper.
+This test will fail as we need to update the test to include the node:
 
-```diff
-+ use Drupal\my_module\Wrapper\ArticleWrapper;
-  use Drupal\Tests\UnitTestCase;
+> ArgumentCountError: Too few arguments to function Drupal\my_module\Entity\Post::__construct(), 0 passed in /home/opdavies/Code/Personal/workshop-drupal-automated-testing-code/web/modules/custom/my_module/tests/src/Unit/Entity/PostTest.php on line 12 and exactly 1 expected
+
+### 6d: Mocking the article node
+
+As we are working with a unit test, we can't interact with the database in the same way that we can with functional or kernel tests. This means that using methods like `Node::create` won't work in unit tests, so we need to create our own mock node and tell it what to return.
+
+```php
+$node = $this->createMock(NodeInterface::class);
+
+$node->expects($this->once())
+  ->method('label')
+  ->willReturn('Test post');
 ```
 
-Currently, we don’t yet have an article to wrap.
+This ensures that the `label()` method will only be called once and that it will return the string `Test post`.
 
-> Undefined variable: article
+As this is the same value as our expection in the test, this test should now pass.
 
-Because this is a unit test which has no access to the database, we can’t use the `createNode()` method or `Node::create()` so we need to create a mock node.
+However, whilst the unit tests are all passing, one of the kernel tests is now failing.
 
-```diff
-+ use Drupal\node\NodeInterface;
+### 6e. Fixing the ArticleRepository test
 
-$article = $this->createMock(NodeInterface::class);
-```
-
-This satisfies the instance assertion, but the other assertions are failing.
-
-> Failed asserting that null is identical to 5.
-
-In order for this to pass, we need to specify what value each method will method will return (e.g. which node ID and which bundle type) so that these values are populated when used within the production code.
+To get `ArticleRepositoryTest` passing again, we need to update the `getAll()` method and add the node as an argument to the create `Post`.
 
 ```diff
-  $article = $this->createMock(NodeInterface::class);
-+ $article->method('id')->willReturn(5);
-+ $article->method('bundle')->willReturn('article');
+  return array_map(function (NodeInterface $node): Post {
+-   return new Post();
++   return new Post($node);
+  }, $articles);
 ```
 
-> OK (1 test, 3 assertions)
+### 6f: Only article nodes should be used for Posts
 
-### 5b. Ensure that we’re only wrapping articles
-
-The ArticleWrapper is only supposed to be used for wrapping articles, so we want to throw an Exception if a different type of node is used.
-
-Let’s create a page node and assert that an Exception should be thrown.
+Currently any node is able to be passed to the `Post` class. Let's ensure that only article nodes can be added by adding a check and throwing an Exception.
 
 ```php
 /** @test */
 public function it_throws_an_exception_if_the_node_is_not_an_article() {
+  $node = $this->createMock(NodeInterface::class);
+
+  $node->method('bundle')->willReturn('page');
+
   $this->expectException(\InvalidArgumentException::class);
 
-  $page = $this->createMock(NodeInterface::class);
-  $page->method('bundle')->willReturn('page');
-
-  new ArticleWrapper($page);
+  new Post($node);
 }
 ```
 
-Because we’re currently not throwing an Exception, the assertion fails.
+Again, we need to mock the node, but this time, let's set the `bundle()` method to return a value that should throw an Exception.
 
-> Failed asserting that exception of type "InvalidArgumentException" is thrown.
+### 6g: Throw an Exception for non-articles
 
-Within `ArticleWrapper`, add a check using the `bundle()` method and throw an Exception if it is not an article.
-
+Let's add a check to the `Post` constructor
 ```diff
   public function __construct(NodeInterface $node) {
-+   $this->verifyNodeType($node);
-
-    $this->article = $node;
-  }
-
-+ private function verifyNodeType(NodeInterface $node): void {
-+  if ($node->bundle() != 'article') {
-+    throw new \InvalidArgumentException(sprintf(
-+      '%s is not an article',
-+      $node->bundle()
-+    ));
++   if ($node->bundle() != 'article') {
++     throw new \InvalidArgumentException();
 +   }
-+ }
-```
-
-If the Exception is thrown, the test will pass.
-
-### 5c. Determine if articles are publishable
-
-Let’s imagine that there is a rule that articles less than 3 days old are not eligible to be published and we want to add an `isPublishable()` method that will contain this logic and determine whether or not an article is publishable.
-
-We need access to the `Time` class to get the system time, so this is added as an argument to the constructor and used within `isPublishable()` to compare the created time of the article to the current time.
-
-```diff
-+ use Drupal\Component\Datetime\TimeInterface;
-  use Drupal\node\NodeInterface;
-
-  class ArticleWrapper {
-
-    private $article;
-
--   public function __construct(NodeInterface $node) {
-+   public function __construct(TimeInterface $time, NodeInterface $node) {
-      $this->verifyNodeType($node);
-
-+     $this->time = $time;
-      $this->article = $node;
-    }
-
-+   public function isPublishable(): bool {
-+     $created = $this->article->getCreatedTime();
 +
-+    $difference = $this->time->getRequestTime() - $created;
-+
-+    return $difference >= 60 * 60 * 24 * 3;
-+  }
-
+    $this->node = $node;
   }
 ```
 
-We want to compare against a number of dates to ensure that this is working as expected. Rather than writing separate tests, we can use a data provider. This is a method that returns data to be passed to the tests as parameters.
+This will result in the Exception being thrown if the node is not an article, and the test should pass.
 
-```php
-public function articleCreatedDateProvider() {
-  return [
-    ['-1 day', FALSE],
-    ['-2 days 59 minutes', FALSE],
-    ['-3 days', TRUE],
-    ['-1 week', TRUE],
-  ];
-}
-```
+### 6h: Fixing the existing unit test
 
-Use the `@dataProvider` annotation for the test to specify the method to use, and add the parameters to the test.
-
-We also need to create a mock for `TimeInterface` so that it can be passed into the article wrapper, and so that methods on it can return certain values.
-
-```php
-/**
- * @test
- * @dataProvider articleCreatedDateProvider
- */
-public function articles_created_less_than_3_days_ago_are_not_publishable(
-  string $offset,
-  bool $expected
-) {
-  $time = $this->createMock(TimeInterface::class);
-
-  $time->method('getRequestTime')->willReturn(
-    (new \DateTime())->getTimestamp()
-  );
-
-  $article = $this->createMock(NodeInterface::class);
-  $article->method('bundle')->willReturn('article');
-
-  $article->method('getCreatedTime')->willReturn(
-    (new \DateTime())->modify($offset)->getTimestamp()
-  );
-
-  $articleWrapper = new ArticleWrapper($time, $article);
-
-  $this->assertSame($expected, $articleWrapper->isPublishable());
-}
-```
-
-We can use `$offset` value to modify the returned date from `getCreatedTime()`, and use `$expected` to make the assertion against `isPublishable()`.
-
-The test is run, is then run against each set of data and passes or fails accordingly.
-
-> - Articles created less than 3 days ago are not publishable with data set #0 [23.76 ms]
-> - Articles created less than 3 days ago are not publishable with data set #1 [0.32 ms]
-> - Articles created less than 3 days ago are not publishable with data set #2 [0.25 ms]
-> - Articles created less than 3 days ago are not publishable with data set #3 [0.37 ms]
-
-The other tests will also need to be updated to mock `TimeInterface` and pass it to the article wrapper.
-
-## 5d: Refactoring the unit tests
-
-With the unit tests passing, we can refactor them and simplify things by extracting a method for creating an article wrapper.
-
-As each test will need the mocked time, this can be moved into a `setUp` method, and we can use `$this->time` instead within the test.
-
-```php
-private $time;
-
-protected function setUp() {
-  parent::setUp();
-
-  $this->time = $this->createMock(Time::class);
-}
-```
+Due to this new check, we also need to update the previous unit test so that includes a value for the bundle.
 
 ```diff
-- $time->method('getRequestTime')->willReturn(
-+ $this->time->method('getRequestTime')->willReturn(
-    (new \DateTime())->getTimestamp()
-  );
+  $node->expects($this->once())
+    ->method('label')
+    ->willReturn('Test post');
++ $node->method('bundle')->willReturn('article');
 ```
-
-To make it simpler to create an article wrapper, we can create a helper method for that. This will also be responsible for creating and injecting any dependencies.
-
-```php
-private function createArticleWrapper(NodeInterface $article): ArticleWrapper {
-  return new ArticleWrapper($this->time, $article);
-}
-```
-
-Now we can update the tests to use the new `createArticleWrapper()` method:
-
-```diff
-- $time = $this->createMock(TimeInterface::class);
-- $articleWrapper = new ArticleWrapper($time, $article);
-+ $articleWrapper = $this->createArticleWrapper($article);
-
-- $time = $this->createMock(TimeInterface::class);
-- new ArticleWrapper($time, $page);
-+ $articleWrapper = $this->createArticleWrapper($page);
-
-- $articleWrapper = new ArticleWrapper($time, $article);
-+ $articleWrapper = $this->createArticleWrapper($article);
-```
-
-If the refactor was successful, the tests will still pass.
