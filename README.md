@@ -39,10 +39,11 @@
   - [4e. Adding the getAll() method](#4e-adding-the-getall-method)
   - [4f. Building up the ArticleRepository](#4f-building-up-the-articlerepository)
   - [4g. Adding articles](#4g-adding-articles)
-  - [4h. Making this test less brittle](#4h-making-this-test-less-brittle)
-  - [4i. Ensuring that only published articles are returned](#4i-ensuring-that-only-published-articles-are-returned)
-  - [4j. Ensuring that articles are returned in the correct order](#4j-ensuring-that-articles-are-returned-in-the-correct-order)
-  - [4k. Linking up the repository to the BlogPageController](#4k-linking-up-the-repository-to-the-blogpagecontroller)
+  - [4h. Ensuring that only articles are returned](#4h-ensuring-that-only-articles-are-returned)
+  - [4i. Making this test less brittle](#4i-making-this-test-less-brittle)
+  - [4j. Ensuring that only published articles are returned](#4j-ensuring-that-only-published-articles-are-returned)
+  - [4k. Ensuring that articles are returned in the correct order](#4k-ensuring-that-articles-are-returned-in-the-correct-order)
+  - [4l. Linking up the repository to the BlogPageController](#4l-linking-up-the-repository-to-the-blogpagecontroller)
 - [Step 5: Wrapping up with unit tests](#step-5-wrapping-up-with-unit-tests)
   - [5a. Creating an ArticleWrapper](#5a-creating-an-articlewrapper)
   - [5b. Ensure that we’re only wrapping articles](#5b-ensure-that-were-only-wrapping-articles)
@@ -519,7 +520,7 @@ use Drupal\KernelTests\Core\Entity\EntityKernelTestBase;
 class ArticleRepositoryTest extends EntityKernelTestBase {
 
   /** @test */
-  public function nodes_that_are_not_articles_are_not_returned() {
+  public function it_returns_blog_posts() {
 
   }
 
@@ -538,8 +539,8 @@ We know that the end objective for this test is to have 3 article nodes returned
 
 ```diff
   /** @test */
-  public function nodes_that_are_not_articles_are_not_returned() {
-+    $this->assertCount(3, $articles);
+  public function it_returns_blog_posts() {
++    $this->assertCount(1, $articles);
   }
 ```
 
@@ -553,10 +554,10 @@ As the test name suggests, we’re going to be retrieving the articles from an `
 
 ```diff
   /** @test */
-  public function nodes_that_are_not_articles_are_not_returned() {
+  public function it_returns_blog_posts() {
 +   $repository = $this->container->get(ArticleRepository::class);
 +
-    $this->assertCount(3, $articles);
+    $this->assertCount(1, $articles);
   }
 ```
 
@@ -617,7 +618,7 @@ We’ll use a `getAll()` method on the repository to retrieve the articles from 
   $repository = $this->container->get(ArticleRepository::class);
 + $articles = $repository->getAll();
 
-  $this->assertCount(3, $articles);
+  $this->assertCount(1, $articles);
 ```
 
 This method doesn’t exist on the repository yet, so the test will fail.
@@ -691,7 +692,7 @@ As we did previously, we need to enable the `node` module.
 
 The `ArticleRepository` is now working, but is still returning no articles - though this is because we haven’t created any inside the test.
 
-> Failed asserting that actual size 0 matches expected size 3.
+> Failed asserting that actual size 0 matches expected size 1.
 
 ### 4g. Adding articles
 
@@ -713,12 +714,10 @@ Include the import statement at the top of the file if it hasn’t been added au
 
 This gives us a `createNode` method that we can use to create nodes by passing an array of values.
 
-As we need 3 articles, let’s create them.
+As we need an article to retrieve, let’s create one.
 
 ```diff
-+ $this->createNode(['type' => 'article'])->save();
-+ $this->createNode(['type' => 'article'])->save();
-+ $this->createNode(['type' => 'article'])->save();
++ $this->createNode(['type' => 'article', 'title' => 'Test post'])->save();
 
   $repository = $this->container->get(ArticleRepository::class);
   $articles = $repository->getAll();
@@ -768,11 +767,46 @@ We also need to create the `node_access` table as indicated by the next error:
   }
 ```
 
-We’ve successfully returned our three articles and this test now passes.
+We’ve successfully returned our article and this test now passes.
 
 > OK (1 test, 11 assertions)
 
-### 4h. Making this test less brittle
+Whilst the test is passing, let's add some additional assertions to check the type of object being returned and its title.
+
+```diff
+  $this->assertCount(1, $articles);
++ $this->assertIsObject($articles[1]);
++ $this->assertInstanceOf(NodeInterface::class, $articles[1]);
++ $this->assertSame('Test post', $articles[1]->label());
+```
+
+> OK (1 test, 14 assertions)
+
+### 4h. Ensuring that only articles are returned
+
+Let's start with a new test, this time with three article nodes:
+
+```php
+/** @test */
+public function nodes_that_are_not_articles_are_not_returned() {
+  $this->createNode(['type' => 'article'])->save();
+  $this->createNode(['type' => 'article'])->save();
+  $this->createNode(['type' => 'article'])->save();
+
+  $repository = $this->container->get(ArticleRepository::class);
+  $articles = $repository->getAll();
+
+  $this->assertCount(3, $articles);
+}
+```
+
+Again, we can use the node creation trait to create the required content.
+
+As we already have the `ArticleRepository` in place, this test should pass straight away.
+
+> OK (1 test, 11 assertions)
+
+### 4i. Making this test less brittle
 
 The test is passing, but it currently returns _all_ nodes and not just articles.
 
@@ -797,7 +831,7 @@ We can make a change to the `ArticleRepository` to fix this, and ensure that we�
 + ]);
 ```
 
-### 4i. Ensuring that only published articles are returned
+### 4j. Ensuring that only published articles are returned
 
 We now know that only article nodes are returned, but _all_ articles are being returned. On our blog, we only want to published articles to be displayed.
 
@@ -852,7 +886,7 @@ With this added, the test passes again.
 
 > OK (1 test, 6 assertions)
 
-### 4j. Ensuring that articles are returned in the correct order
+### 4k. Ensuring that articles are returned in the correct order
 
 As per our acceptance criteria, we need the articles to be returned based on their created date, so let’s create another test.
 
@@ -940,7 +974,7 @@ The nodes are now ordered by their created date, and in the correct order to mat
 
 > OK (1 test, 11 assertions)
 
-### 4k. Linking up the repository to the BlogPageController
+### 4l. Linking up the repository to the BlogPageController
 
 Now that our `ArticleRepository` tests are passing, we can use it within `BlogPageController` so that articles are displayed on the page.
 
