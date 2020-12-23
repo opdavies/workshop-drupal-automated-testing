@@ -1,6 +1,10 @@
 Workshop: Automated Testing and Test Driven Development in Drupal 8
 ===================================================================
 
+.. sectnum::
+
+.. contents::
+
 Contribution
 ------------
 
