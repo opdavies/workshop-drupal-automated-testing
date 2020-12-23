@@ -300,6 +300,8 @@ As this functionality is provided by Drupal core by default, this should pass au
 
 .. code:: php
 
+    <?php
+
     /** @test */
     public function the_admin_page_is_not_accessible_to_anonymous_users() {
       $this->drupalGet('admin');
@@ -317,6 +319,8 @@ This introduces some new concepts. We need to create a user to begin with, and a
 The ``BrowserTestBase`` class gives access to a number of helper methods, including ones for creating and logging-in users (``createUser`` and ``drupalLogin`` respectively). When creating a user, the first argument is an array of permission names to add. In this case, we can make the user an admin user by adding the ``access administration pages`` permission.
 
 .. code:: php
+
+    <?php
 
     /** @test */
     public function the_admin_page_is_accessible_by_admin_users() {
@@ -809,6 +813,8 @@ Let's start with a new test, this time with three article nodes:
 
 .. code:: php
 
+    <?php
+
     /** @test */
     public function nodes_that_are_not_articles_are_not_returned() {
       $this->createNode(['type' => 'article'])->save();
@@ -1178,6 +1184,8 @@ For the first test case, let's ensure that the title is returned.
 
 .. code:: php
 
+    <?php
+
     /** @test */
     public function it_gets_the_title() {
       $post = new Post();
@@ -1195,6 +1203,8 @@ Adding the getTitle() method
 Within the ``Post`` class, add a ``getTitle()`` method which will return a string. For now, let's return an empty string:
 
 .. code:: php
+
+    <?php
 
     public function getTitle(): string {
       return '';
@@ -1214,6 +1224,8 @@ To get the post's title, we need to add a constructor to the ``Post`` class whic
 
 .. code:: php
 
+    <?php
+
     class Post {
 
       private $node;
@@ -1230,10 +1242,7 @@ To get the post's title, we need to add a constructor to the ``Post`` class whic
 
 This test will fail as we need to update the test to include the node:
 
-    ArgumentCountError: Too few arguments to function
-    Drupal\_module::\_\_construct(), 0 passed in
-    /home/opdavies/Code/Personal/workshop-drupal-automated-testing-code/web/modules/custom/my\_module/tests/src/Unit/Entity/PostTest.php
-    on line 12 and exactly 1 expected
+    ArgumentCountError: Too few arguments to function Drupal\_module::\_\_construct(), 0 passed in /home/opdavies/Code/Personal/workshop-drupal-automated-testing-code/web/modules/custom/my\_module/tests/src/Unit/Entity/PostTest.php on line 12 and exactly 1 expected
 
 Mocking the article node
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1241,6 +1250,8 @@ Mocking the article node
 As we are working with a unit test, we can't interact with the database in the same way that we can with functional or kernel tests. This means that using methods like ``Node::create`` won't work in unit tests, so we need to create our own mock node and tell it what to return.
 
 .. code:: php
+
+    <?php
 
     $node = $this->createMock(NodeInterface::class);
 
@@ -1272,6 +1283,8 @@ Only article nodes should be used for Posts
 Currently any node is able to be passed to the ``Post`` class. Let's ensure that only article nodes can be added by adding a check and throwing an Exception.
 
 .. code:: php
+
+    <?php
 
     /** @test */
     public function it_throws_an_exception_if_the_node_is_not_an_article() {
