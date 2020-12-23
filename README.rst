@@ -133,8 +133,8 @@ approach to develop a module to the following acceptance criteria:
 -  I want to see a list of all published articles at ``/blog``
 -  Ordered by post date, with the newest posts first
 
-Step 0: Preparation
--------------------
+Preparation
+-----------
 
 To begin, we need the site to be running.
 
@@ -149,11 +149,11 @@ To begin, we need the site to be running.
 You don’t need to install Drupal. It just needs to be able to connect to
 the database.
 
-Step 1: Writing your first test
--------------------------------
+Writing your first test
+-----------------------
 
-1a. Create the module directory
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Create the module directory
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Create a directory for the new module:
 
@@ -174,15 +174,15 @@ Within the ``my_module`` directory, create the file and paste in the following c
     type: module
     core_version_requirement: ^8 || ^9
 
-1c. Create the directory structure for tests
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Create the directory structure for tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: bash
 
     mkdir -p tests/src/Functional
 
-1d. Create your first test case
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Create your first test case
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: php
 
@@ -220,8 +220,8 @@ Some things to note:
 -  The namespace is ``Drupal\Tests\{module_name}``, followed by any additional directories (e.g. ``Functional``).
 -  Test methods must start with ``test``, or use the ``@test`` annotation.
 
-1e. Preparing PHPUnit
-~~~~~~~~~~~~~~~~~~~~~
+Preparing PHPUnit
+~~~~~~~~~~~~~~~~~
 
 Firstly, we need to create a ``phpunit.xml`` file to configure PHPUnit. Core has a ``phpunit.xml.dist`` file that we can duplicate and edit.
 
@@ -241,8 +241,8 @@ We also need to configure the database for Drupal to connect to and use when run
     - <env name="SIMPLETEST_DB" value=""/>
     + <env name="SIMPLETEST_DB" value="sqlite://localhost//dev/shm/test.sqlite"/>
 
-1f. Running the tests
-~~~~~~~~~~~~~~~~~~~~~
+Running the tests
+~~~~~~~~~~~~~~~~~
 
 .. code:: bash
 
@@ -260,8 +260,8 @@ If a test failed, the output would show the class and method name for the failin
 Other useful options include ``--stop-on-failure``, ``--filter`` and
 ``--testdox``.
 
-1g. (Optional) Running tests via a Composer script
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(Optional) Running tests via a Composer script
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To simplify running tests, the command could be simplified by `adding a script <https://getcomposer.org/doc/articles/scripts.md#writing-custom-commands>` to ``composer.json``:
 
@@ -288,11 +288,11 @@ If needed, you can still pass additional arguments and options to the command by
 
 Locally, ensure that the command is prefixed with ``ddev`` so that it is run within the container. This ensures that the correct PHP version etc is used.
 
-Step 2: Adding more test methods
---------------------------------
+Adding more test methods
+------------------------
 
-2a. Ensure that anonymous users cannot access admin pages
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Ensure that anonymous users cannot access admin pages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Now that we’re sure that the front page loads correctly, lets also check anonymous users cannot access the administration area. This test is very similar to the previous one, though instead we’re making a GET request to ``/admin`` and ensuring that the response code is 403 (forbidden).
 
@@ -307,8 +307,8 @@ As this functionality is provided by Drupal core by default, this should pass au
       $this->assertSession()->statusCodeEquals(Response::HTTP_FORBIDDEN);
     }
 
-2b. Ensure that administrators can access admin pages
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Ensure that administrators can access admin pages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Now let’s check that an administrator user *can* access the admin pages.
 
@@ -333,11 +333,11 @@ The ``BrowserTestBase`` class gives access to a number of helper methods, includ
 
 Again, as this functionality is provided by Drupal core by default, this should pass. However, we can be confident that the test is doing what’s needed by making it fail by removing or changing the assigned permissions, or not logging in the user before accessing the page.
 
-Step 3: Building a blog
------------------------
+Building a blog
+---------------
 
-3a. Anonymous users should be able to view the blog page
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Anonymous users should be able to view the blog page
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Let’s start by building a blog page. This will look very similar to the admin page tests, but instead we’ll be testing the ``/blog`` page.
 
@@ -375,8 +375,8 @@ This test will fail as there’s no route for ``/blog`` and no View that generat
 
     Current response status code is 404, but 200 expected.
 
-3b: Add a route for the blog page
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Add a route for the blog page
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We’ll create a blog page using a custom route in the module. You could also do this with the Views module by creating a View with a page on that path, and exporting the configuration into the module’s ``config/install`` directory.
 
@@ -400,8 +400,8 @@ If we run the tests now, we get an access denied error (403 response).
 
     Current response status code is 403, but 200 expected.
 
-3c: Fix permission error
-~~~~~~~~~~~~~~~~~~~~~~~~
+Fix permission error
+~~~~~~~~~~~~~~~~~~~~
 
 Because we need to node module to be able to access the ``access content`` permission, we need to enable it within our tests.
 
@@ -418,8 +418,8 @@ Now the error has changed, and is now returning a 500 response because we’ve s
 
     Current response status code is 500, but 200 expected.
 
-3d: Add the BlogPageController
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Add the BlogPageController
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Let’s create the ``BlogPageController``.
 
@@ -454,8 +454,8 @@ This is how the page looks in a browser:
 .. figure:: docs/images/1.png
    :alt: 
 
-3e: Refactor, add more assertions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Refactor, add more assertions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Now that the test is passing, we can do some refactoring and make the test more robust by ensuring that the correct text is displayed.
 
@@ -504,11 +504,11 @@ Now the tests will pass because we’re returning the correct text.
 .. figure:: docs/images/2.png
    :alt: 
 
-Step 4. Getting blog posts
---------------------------
+Getting blog posts
+------------------
 
-4a Creating our first kernel test
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Creating our first kernel test
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We’ll be using an ArticleRepository class to get the blog posts from the database, and this is also a good time to switch to writing kernel tests as we don’t need to check any responses from the browser.
 
@@ -543,8 +543,8 @@ This test looks very similar to the functional ones that we’ve already written
 
 This test is extending ``EntityKernelTestBase`` as we’re working with entities and this performs some useful setup steps for us. There are different base classes that can be used though based on what you need - including ``KernelTestBase`` and ``ConfigFormTestBase``.
 
-4b. Starting with an assertion
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Starting with an assertion
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Let’s write this test 'backwards' and start with the 'assert' phase.
 
@@ -561,8 +561,8 @@ As we aren’t yet returning any articles, or even creating that variable, the t
 
     Undefined variable: articles
 
-4c. Trying to use the ArticleRepository
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Trying to use the ArticleRepository
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As the test name suggests, we’re going to be retrieving the articles from an ``ArticleRepository`` service - though this doesn’t exist yet, but let’s let the tests tell us that.
 
@@ -581,8 +581,8 @@ Running the test now gives us a different error, and tells us what the next step
 
     Symfony: You have requested a non-existent service "Drupal\_module".
 
-4d. Creating an article repository
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Creating an article repository
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: bash
 
@@ -625,8 +625,8 @@ We’ve fixed the missing repository, though we still haven’t created the ``$a
 
     Undefined variable: articles
 
-4e. Adding the ``getAll()`` method
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Adding the ``getAll()`` method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We’ll use a ``getAll()`` method on the repository to retrieve the articles from the database, and use the value of this for the ``$articles`` variable:
 
@@ -657,8 +657,8 @@ Now we’ve got everything in place, and the test failure is because we aren’t
 
 We can fix this by building up the ``ArticleRepository`` class.
 
-4f. Building up the ArticleRepository
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Building up the ArticleRepository
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``ArticleRepository`` needs to return some articles. We can do this by injecting the ``EntityTypeManager`` and using it to return nodes from the ``getAll()`` method rather than the empty array.
 
@@ -711,8 +711,8 @@ The ``ArticleRepository`` is now working, but is still returning no articles - t
 
     Failed asserting that actual size 0 matches expected size 1.
 
-4g. Adding articles
-~~~~~~~~~~~~~~~~~~~
+Adding articles
+~~~~~~~~~~~~~~~
 
 To test the ArticleRepository, we need articles to be created so that they can be returned.
 
@@ -802,8 +802,8 @@ Whilst the test is passing, let's add some additional assertions to check the ty
 
     OK (1 test, 14 assertions)
 
-4h. Ensuring that only articles are returned
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Ensuring that only articles are returned
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Let's start with a new test, this time with three article nodes:
 
@@ -827,8 +827,8 @@ As we already have the ``ArticleRepository`` in place, this test should pass str
 
     OK (1 test, 11 assertions)
 
-4i. Making this test less brittle
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Making this test less brittle
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The test is passing, but it currently returns *all* nodes and not just articles.
 
@@ -853,8 +853,8 @@ We can make a change to the ``ArticleRepository`` to fix this, and ensure that w
     +   'type' => 'article',
     + ]);
 
-4j. Ensuring that only published articles are returned
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Ensuring that only published articles are returned
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We now know that only article nodes are returned, but *all* articles are being returned. On our blog, we only want to published articles to be displayed.
 
@@ -909,8 +909,8 @@ With this added, the test passes again.
 
     OK (1 test, 6 assertions)
 
-4k. Ensuring that articles are returned in the correct order
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Ensuring that articles are returned in the correct order
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As per our acceptance criteria, we need the articles to be returned based on their created date, so let’s create another test.
 
@@ -998,8 +998,8 @@ The nodes are now ordered by their created date, and in the correct order to mat
 
     OK (1 test, 11 assertions)
 
-4l. Linking up the repository to the BlogPageController
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Linking up the repository to the BlogPageController
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Now that our ``ArticleRepository`` tests are passing, we can use it within ``BlogPageController`` so that articles are displayed on the page.
 
@@ -1071,15 +1071,15 @@ In the browser, we should see our list of articles.
 .. figure:: docs/images/3.png
    :alt: 
 
-Step 5: Creating a custom Post class
-------------------------------------
+Creating a custom Post class
+----------------------------
 
 What if we wanted to return a custom ``Post`` class from the repository with its own data and logic rather than a generic Drupal node? As the repository is responsible for finding and returning nodes, we can make changes there and return what we want.
 
 Let's start by changing one of our existing tests.
 
-5a: Changing the existing test
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Changing the existing test
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In ``ArticleRepositoryTest`` we have existing assertions as to what type of object is returned. Currently, this should be an instance of a ``Node::class``. Let's change that to a new ``Post::class`` and also change the ``label`` method to a more desciriptive ``getTitle()``.
 
@@ -1098,8 +1098,8 @@ As we have no ``Post`` class and are still returning the original nodes from the
        (No Value) of PHPUnit::assertInstanceOf() must be a class or
        interface name
 
-5b: Adding a Post class
-~~~~~~~~~~~~~~~~~~~~~~~
+Adding a Post class
+~~~~~~~~~~~~~~~~~~~
 
 Create a new ``Entity`` directory and a new ``Post.php`` file inside it.
 
@@ -1130,8 +1130,8 @@ Now the test failure should change as we're still returning standard Drupal node
     Drupal\ *module::it*\ returns\_blog\_posts Failed asserting that
     DrupalObject (...) is an instance of class "Drupal\_module".
 
-5c: Returning Post classes
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Returning Post classes
+~~~~~~~~~~~~~~~~~~~~~~
 
 To pass this failure, we need to update the Repository and return instances of ``Post`` rather than the standard Drupal nodes.
 
@@ -1150,11 +1150,11 @@ This will return an array of ``Post`` objects, and change the failure message as
 
 To do this, let's start by adding a Unit test.
 
-Step 6: Unit testing the Post class
------------------------------------
+Unit testing the Post class
+---------------------------
 
-6a: Creating a PostTest class
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Creating a PostTest class
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Create a ``Unit`` directory, an ``Entity`` sub-directory, and a ``PostTest.php`` file. Typically, unit tests match the directory structure in ``src`` and the class name that they're testing.
 
@@ -1189,8 +1189,8 @@ If we run this, we get an undefined method error:
 
     Error: Call to undefined method Drupal\_module::getTitle()
 
-6b: Adding the getTitle() method
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Adding the getTitle() method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Within the ``Post`` class, add a ``getTitle()`` method which will return a string. For now, let's return an empty string:
 
@@ -1207,8 +1207,8 @@ This will cause a different failure as the expected title doesn't match the retu
 
 To get the real title, we'll need to pass the article node into the ``Post`` class so that we can reference it.
 
-6c: Returning the real title
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Returning the real title
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 To get the post's title, we need to add a constructor to the ``Post`` class which accepts the original node, which we can then use to get its title.
 
@@ -1235,8 +1235,8 @@ This test will fail as we need to update the test to include the node:
     /home/opdavies/Code/Personal/workshop-drupal-automated-testing-code/web/modules/custom/my\_module/tests/src/Unit/Entity/PostTest.php
     on line 12 and exactly 1 expected
 
-6d: Mocking the article node
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Mocking the article node
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 As we are working with a unit test, we can't interact with the database in the same way that we can with functional or kernel tests. This means that using methods like ``Node::create`` won't work in unit tests, so we need to create our own mock node and tell it what to return.
 
@@ -1254,8 +1254,8 @@ As this is the same value as our expection in the test, this test should now pas
 
 However, whilst the unit tests are all passing, one of the kernel tests is now failing.
 
-6e. Fixing the ArticleRepository test
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Fixing the ArticleRepository test
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To get ``ArticleRepositoryTest`` passing again, we need to update the ``getAll()`` method and add the node as an argument to the create ``Post``.
 
@@ -1266,8 +1266,8 @@ To get ``ArticleRepositoryTest`` passing again, we need to update the ``getAll()
     +   return new Post($node);
       }, $articles);
 
-6f: Only article nodes should be used for Posts
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Only article nodes should be used for Posts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Currently any node is able to be passed to the ``Post`` class. Let's ensure that only article nodes can be added by adding a check and throwing an Exception.
 
@@ -1286,8 +1286,8 @@ Currently any node is able to be passed to the ``Post`` class. Let's ensure that
 
 Again, we need to mock the node, but this time, let's set the ``bundle()`` method to return a value that should throw an Exception.
 
-6g: Throw an Exception for non-articles
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Throw an Exception for non-articles
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Let's add a check to the ``Post`` constructor
 
@@ -1303,8 +1303,8 @@ Let's add a check to the ``Post`` constructor
 
 This will result in the Exception being thrown if the node is not an article, and the test should pass.
 
-6h: Fixing the existing unit test
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Fixing the existing unit test
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Due to this new check, we also need to update the previous unit test so that includes a value for the bundle.
 
