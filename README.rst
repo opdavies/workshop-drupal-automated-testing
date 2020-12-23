@@ -455,7 +455,7 @@ This is enough for the test to pass. Though it just returns an empty page, it no
 
 This is how the page looks in a browser:
 
-.. figure:: docs/images/1.png
+.. figure:: images/1.png
    :alt: 
 
 Refactor, add more assertions
@@ -505,7 +505,7 @@ Now the tests will pass because we’re returning the correct text.
 
     OK (1 test, 3 assertions)
 
-.. figure:: docs/images/2.png
+.. figure:: images/2.png
    :alt: 
 
 Getting blog posts
@@ -1074,7 +1074,7 @@ Now we can inject the ``ArticleRepository`` and use it to load and render the ar
 
 In the browser, we should see our list of articles.
 
-.. figure:: docs/images/3.png
+.. figure:: images/3.png
    :alt: 
 
 Creating a custom Post class
